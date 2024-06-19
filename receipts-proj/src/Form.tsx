@@ -1,3 +1,5 @@
+import { FormEvent } from "react";
+
 const body = {
   name: "myname",
 };
@@ -5,7 +7,7 @@ const body = {
 const lambdaURL =
   "https://wyo8uceuk3.execute-api.us-east-2.amazonaws.com/default/insert";
 
-function handleSubmit(event) {
+function handleSubmit(event: FormEvent<HTMLFormElement>) {
   event.preventDefault();
   fetch(lambdaURL, {
     method: "POST",
