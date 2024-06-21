@@ -3,7 +3,8 @@ import "./Form.css";
 
 // const lambdaURL =
 //   "https://wyo8uceuk3.execute-api.us-east-2.amazonaws.com/default/insert";
-const lambdaURL = "http://localhost:3000/test";
+const lambdaURL = "http://localhost:3000/createNewAccount";
+const loginURL = "http://localhost:3000/login";
 const saltRounds = 10;
 
 function handleSubmit(event: React.SyntheticEvent) {
@@ -35,6 +36,28 @@ function handleSubmit(event: React.SyntheticEvent) {
   );
 }
 
+function handleLogin(event: React.SyntheticEvent) {
+  event.preventDefault();
+
+  const form = event.currentTarget as HTMLFormElement | undefined;
+  const formData = new FormData(form);
+  const body: {
+    [key: string]: string;
+  } = {};
+  formData.forEach((value, key) => (body[key] = value as string));
+
+  fetch(loginURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  })
+    .then((response) => response.text())
+    .then((data) => console.log(data))
+    .catch((error) => console.error(error));
+}
+
 export default function Form() {
   return (
     <div id="formDiv">
@@ -43,18 +66,16 @@ export default function Form() {
         <input type="text" id="username" name="username" />
         <label>Password:</label>
         <input type="text" id="password" name="password" />
-        <button type="submit">Do the thing</button>
+        <button type="submit">Create Account</button>
       </form>
-      <button
-        onClick={() =>
-          fetch("http://localhost:3000/verify")
-            .then((response) => response.text())
-            .then((data) => console.log(data))
-            .catch((error) => console.error(error))
-        }
-      >
-        Verify
-      </button>
+
+      <form id="submitForm" onSubmit={handleLogin}>
+        <label>Username:</label>
+        <input type="text" id="username" name="username" />
+        <label>Password:</label>
+        <input type="text" id="password" name="password" />
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 }
