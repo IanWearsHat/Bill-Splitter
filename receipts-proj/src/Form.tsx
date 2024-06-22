@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import "./Form.css";
 
-// const lambdaURL =
-//   "https://wyo8uceuk3.execute-api.us-east-2.amazonaws.com/default/insert";
-const lambdaURL = "http://localhost:3000/createNewAccount";
-const loginURL = "http://localhost:3000/login";
+const createAccountURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createAccount";
+const loginURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/login";
 const saltRounds = 10;
 
 function handleSubmit(event: React.SyntheticEvent) {
@@ -21,8 +21,10 @@ function handleSubmit(event: React.SyntheticEvent) {
     body["password"],
     saltRounds,
     function (err: Error | null, hash: string) {
+      if (err) return;
+
       body["password"] = hash;
-      fetch(lambdaURL, {
+      fetch(createAccountURL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
