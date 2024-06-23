@@ -1,6 +1,6 @@
 import "./App.css";
 import Form from "./Form";
-import ReceiptEditor from "./ReceiptEditor";
+import ReceiptEditor from "./components/ReceiptEditor";
 
 function App() {
   return (

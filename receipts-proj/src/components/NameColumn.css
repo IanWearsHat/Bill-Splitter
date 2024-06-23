@@ -1,0 +1,7 @@
+#nameColumn {
+    padding: 10em;
+}
+
+.modifiedButton {
+    text-transform: unset !important;
+}
