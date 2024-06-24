@@ -32,25 +32,6 @@ export default function NameColumn({ onButtonClick }: NameColumnProps) {
 
   return (
     <div id="nameColumn">
-      <div id="addNameGroup">
-        <TextField
-          id="outlined-basic"
-          label="Add Name"
-          variant="outlined"
-          value={currentName}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          onClick={() => {
-            setName("");
-            setNames([...names, { id: nextId++, name: currentName }]);
-          }}
-        >
-          Add
-        </Button>
-      </div>
-
       <ToggleButtonGroup
         orientation="vertical"
         size="large"
@@ -82,6 +63,25 @@ export default function NameColumn({ onButtonClick }: NameColumnProps) {
           </div>
         ))}
       </ToggleButtonGroup>
+
+      <div id="addNameGroup">
+        <TextField
+          id="outlined-basic"
+          label="Add Name"
+          variant="outlined"
+          value={currentName}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <Button
+          variant="contained"
+          onClick={() => {
+            setName("");
+            setNames([...names, { id: nextId++, name: currentName }]);
+          }}
+        >
+          Add
+        </Button>
+      </div>
     </div>
   );
 }
