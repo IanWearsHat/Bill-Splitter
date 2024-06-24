@@ -14,10 +14,14 @@ interface StringMap {
 }
 
 interface NameColumnProps {
+  selectedName: string;
   onButtonClick: (value: string) => void;
 }
 
-export default function NameColumn({ onButtonClick }: NameColumnProps) {
+export default function NameColumn({
+  selectedName,
+  onButtonClick,
+}: NameColumnProps) {
   const [currentName, setName] = useState("");
   const [names, setNames] = useState<Array<StringMap>>([]);
 
@@ -43,7 +47,13 @@ export default function NameColumn({ onButtonClick }: NameColumnProps) {
           <div key={name.name}>
             <ToggleButton
               className="modifiedButton"
-              onClick={() => onButtonClick(name.name as string)}
+              onClick={() => {
+                if (selectedName === name.name) {
+                  onButtonClick("");
+                } else {
+                  onButtonClick(name.name as string);
+                }
+              }}
               color="primary"
               value={name.name}
               aria-label={name.name as string}

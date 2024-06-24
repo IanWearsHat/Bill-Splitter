@@ -11,8 +11,8 @@ import {
 import { useEffect, useState } from "react";
 import { useImmer } from "use-immer";
 
-import "./ReceiptColumn.css";
 import { PriceInput } from "../lib/PriceInput";
+import "./ReceiptColumn.css";
 
 let nextId = 0;
 interface ReceiptColumnProps {
@@ -23,6 +23,13 @@ interface ItemsMap {
   [key: string]: string | number;
 }
 
+interface UpdateItemsMap {
+  [key: string]: {
+    name: string;
+    buyers: { [key: string]: number };
+  };
+}
+
 export default function ReceiptColumn({ selectedName }: ReceiptColumnProps) {
   const [itemName, setItemName] = useState<string>("");
   const [items, setItems] = useImmer<object>({});
@@ -30,6 +37,12 @@ export default function ReceiptColumn({ selectedName }: ReceiptColumnProps) {
   useEffect(() => {
     console.log(items);
   }, [items]);
+
+  // function updateReceiptPrice(itemName: string, newPrice: number) {
+  //   setItems((draft: UpdateItemsMap) => {
+  //     draft[itemName]["buyers"][selectedName] = newPrice;
+  //   });
+  // }
 
   return (
     <div className="itemsList">
@@ -46,10 +59,27 @@ export default function ReceiptColumn({ selectedName }: ReceiptColumnProps) {
                 </TableCell>
 
                 <TableCell align="right">
-                  <PriceInput placeholder="Enter buyer total" />
+                  <PriceInput
+                    inputValue={
+                      value.buyers[selectedName]
+                        ? value.buyers[selectedName]
+                        : ""
+                    }
+                    updateReceiptPrice={(newPrice: number) => {
+                      setItems((draft: UpdateItemsMap) => {
+                        draft[receiptItemName]["buyers"][selectedName] =
+                          newPrice;
+                      });
+                    }}
+                    disabled={selectedName === ""}
+                    placeholder={
+                      selectedName === ""
+                        ? "Select buyer first"
+                        : "Enter buyer total"
+                    }
+                  />
                   {" / "}
                   <PriceInput placeholder="Enter total" />
-                  {value.buyers[selectedName]}
                   <Button
                     id={receiptItemName}
                     variant="outlined"
@@ -85,7 +115,7 @@ export default function ReceiptColumn({ selectedName }: ReceiptColumnProps) {
               ...items,
               [itemName]: {
                 id: nextId++,
-                buyers: { Ian: 12, John: 19, Cry: 20 },
+                buyers: {},
               },
             });
           }}
