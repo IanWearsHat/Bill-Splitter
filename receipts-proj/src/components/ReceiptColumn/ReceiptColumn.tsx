@@ -27,6 +27,7 @@ interface UpdateItemsMap {
   [key: string]: {
     name: string;
     buyers: { [key: string]: number };
+    totalPrice: number;
   };
 }
 
@@ -79,7 +80,14 @@ export default function ReceiptColumn({ selectedName }: ReceiptColumnProps) {
                     }
                   />
                   {" / "}
-                  <PriceInput placeholder="Enter total" />
+                  <PriceInput
+                    updateReceiptPrice={(newPrice: number) => {
+                      setItems((draft: UpdateItemsMap) => {
+                        draft[receiptItemName]["totalPrice"] = newPrice;
+                      });
+                    }}
+                    placeholder="Enter total"
+                  />
                   <Button
                     id={receiptItemName}
                     variant="outlined"
@@ -116,6 +124,7 @@ export default function ReceiptColumn({ selectedName }: ReceiptColumnProps) {
               [itemName]: {
                 id: nextId++,
                 buyers: {},
+                totalPrice: 0,
               },
             });
           }}
