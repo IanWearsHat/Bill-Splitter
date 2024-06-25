@@ -2,7 +2,7 @@ import { Input, InputAdornment, InputProps } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
 interface PriceInputProps extends Omit<InputProps, "onChange" | "value"> {
-  inputValue?: string;
+  inputValue?: number;
   updateReceiptPrice?: (value: number) => void;
   alignRight?: boolean;
 }
@@ -16,7 +16,7 @@ export function PriceInput({
   const [value, setValue] = useState<string>("");
 
   useEffect(() => {
-    setValue(inputValue ? inputValue : "");
+    setValue(inputValue ? String(inputValue) : "");
   }, [inputValue]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -15,3 +15,8 @@
 .itemName {
     margin-right: auto;
 }
+
+#tables {
+    display: flex;
+    flex-direction: column;
+}
