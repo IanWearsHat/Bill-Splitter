@@ -1,6 +1,8 @@
 import {
+  Alert,
   Button,
   Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -46,6 +48,19 @@ export default function TableReceipt({
 }: TableReceiptProps) {
   const [itemName, setItemName] = useState<string>("");
 
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (
+    _event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   return (
     <div className="itemsList">
       <TableContainer component={Paper}>
@@ -77,17 +92,21 @@ export default function TableReceipt({
                   <Button
                     variant="contained"
                     onClick={() => {
-                      setItemName("");
-                      setItems((draft) => {
-                        return {
-                          ...draft,
-                          [itemName]: {
-                            id: nextId++,
-                            buyers: {},
-                            totalPrice: 0,
-                          },
-                        };
-                      });
+                      if (itemName in items) {
+                        setOpen(true);
+                      } else {
+                        setItems((draft) => {
+                          return {
+                            ...draft,
+                            [itemName]: {
+                              id: nextId++,
+                              buyers: {},
+                              totalPrice: 0,
+                            },
+                          };
+                        });
+                        setItemName("");
+                      }
                     }}
                   >
                     Add
@@ -108,7 +127,11 @@ export default function TableReceipt({
         </Table>
       </TableContainer>
 
-      {/* left off on making table for tax, tip, other fees, calculating subtotal, calculating total, editing buyer share of other fees, calculating buyer subtotal, calculating buyer total */}
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+        <Alert variant="filled" onClose={handleClose} severity="error">
+          Error: Item already exists in receipt
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

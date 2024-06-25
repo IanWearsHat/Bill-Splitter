@@ -4,14 +4,12 @@ import {
   ToggleButtonGroup,
   Button,
   TextField,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 import "./NameColumn.css";
 
-let nextId = 0;
-interface StringMap {
-  [key: string]: string | number;
-}
 
 interface NameColumnProps {
   selectedName: string;
@@ -23,7 +21,8 @@ export default function NameColumn({
   onButtonClick,
 }: NameColumnProps) {
   const [currentName, setName] = useState("");
-  const [names, setNames] = useState<Array<StringMap>>([]);
+  const [names, setNames] = useState<Array<string>>([]);
+  const [open, setOpen] = useState(false);
 
   const [view, setView] = useState("list");
 
@@ -32,6 +31,17 @@ export default function NameColumn({
     nextView: string
   ) => {
     setView(nextView);
+  };
+
+  const handleClose = (
+    _event: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
   };
 
   return (
@@ -44,28 +54,28 @@ export default function NameColumn({
         onChange={handleChange}
       >
         {names.map((name) => (
-          <div key={name.name}>
+          <div key={name}>
             <ToggleButton
               className="modifiedButton"
               onClick={() => {
-                if (selectedName === name.name) {
+                if (selectedName === name) {
                   onButtonClick("");
                 } else {
-                  onButtonClick(name.name as string);
+                  onButtonClick(name);
                 }
               }}
               color="primary"
-              value={name.name}
-              aria-label={name.name as string}
+              value={name}
+              aria-label={name}
             >
-              {name.name}
+              {name}
             </ToggleButton>
             <Button
-              id={name.name as string}
+              id={name}
               variant="outlined"
               color="error"
               onClick={() => {
-                setNames(names.filter((n) => n.id !== name.id));
+                setNames(names.filter((n) => n !== name));
               }}
             >
               Delete
@@ -85,13 +95,22 @@ export default function NameColumn({
         <Button
           variant="contained"
           onClick={() => {
-            setName("");
-            setNames([...names, { id: nextId++, name: currentName }]);
+            if (names.includes(currentName)) {
+              setOpen(true);
+            } else {
+              setName("");
+              setNames([...names, currentName]);
+            }
           }}
         >
           Add
         </Button>
       </div>
+      <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+        <Alert variant="filled" onClose={handleClose} severity="error">
+          Error: Name already exists
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

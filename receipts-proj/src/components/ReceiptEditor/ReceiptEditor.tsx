@@ -1,16 +1,26 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import NameColumn from "../NameColumn/NameColumn";
 import ReceiptColumn from "../ReceiptColumn/ReceiptColumn";
 
 import "./ReceiptEditor.css";
-import { SelectedNameContext } from "./SelectedNameContext";
+import { ErrorContext } from "./ErrorContext";
+import { Input } from "@mui/material";
+
 
 export default function ReceiptEditor() {
   const [selectedName, setSelectedName] = useState<string>("");
+  const [receiptName, setReceiptName] = useState<string>("");
+
   return (
     <>
-      <p>Selected: {selectedName}</p>
-      <SelectedNameContext.Provider value={selectedName}>
+      <Input
+        placeholder="Enter Receipt Name"
+        value={receiptName}
+        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+          setReceiptName(event.target.value)
+        }
+      />
+      <ErrorContext.Provider value={""}>
         <div id="editor">
           <NameColumn
             selectedName={selectedName}
@@ -18,7 +28,7 @@ export default function ReceiptEditor() {
           />
           <ReceiptColumn selectedName={selectedName} />
         </div>
-      </SelectedNameContext.Provider>
+      </ErrorContext.Provider>
     </>
   );
 }

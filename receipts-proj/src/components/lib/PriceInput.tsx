@@ -24,7 +24,7 @@ export function PriceInput({
     const parts = cleaned.split(".");
     if (parts[1] && parts[1].length > 2) parts[1] = parts[1].slice(0, 2);
     const modifiedValue = parts.slice(0, 2).join(".");
-
+w
     setValue(modifiedValue);
     if (updateReceiptPrice) updateReceiptPrice(Number(modifiedValue));
   };
