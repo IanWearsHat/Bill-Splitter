@@ -156,7 +156,7 @@ export default function ReceiptEditor() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ receiptID: "token" }),
+      body: JSON.stringify({ receiptID: window.location.pathname.substring(1) }),
     })
       .then((response) => response.json())
       .then((data) => {
