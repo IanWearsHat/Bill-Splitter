@@ -51,7 +51,7 @@ function createItemsList(
 
 function createFormData(
   receiptName: string,
-  names: Array<string>,
+  names: Array<Array<string | number>>,
   items: UpdateItemsMap,
   lastItems: UpdateItemsMap
 ) {
@@ -64,7 +64,7 @@ function createFormData(
 
   const buyersToPrices: { [key: string]: number } = {};
   names.map((name) => {
-    buyersToPrices[name] = 0;
+    buyersToPrices[name[0]] = 0;
   });
 
   receipt.items = createItemsList(items, buyersToPrices);
@@ -79,11 +79,28 @@ function createFormData(
   return receipt;
 }
 
+function convertItemsObject(items: Array<{ [key: string]: string | number }>) {
+  const itemsObj: UpdateItemsMap = {};
+  for (let i = 0; i < items.length; i++) {
+    const { name, totalPrice, ...restItems } = items[i];
+
+    itemsObj[name] = {
+      id: i,
+      buyers: { ...restItems } as {
+        [key: string]: number;
+      },
+      totalPrice: totalPrice as number,
+    };
+  }
+  console.log(itemsObj);
+  return itemsObj;
+}
+
 export default function ReceiptEditor() {
   const [selectedName, setSelectedName] = useState<string>("");
   const [receiptName, setReceiptName] = useState<string>("");
 
-  const [names, setNames] = useState<Array<string>>([]);
+  const [names, setNames] = useState<Array<Array<string | number>>>([]);
 
   const [items, setItems] = useImmer<UpdateItemsMap>({});
   const [lastItems, setLastItems] = useImmer<UpdateItemsMap>({});
@@ -115,8 +132,25 @@ export default function ReceiptEditor() {
       })
       .catch((error) => console.error(error));
   }
+  // {
+  //   id: 'ce2b5448139d4929b81e8a53d7469e16',
+  //   receiptName: 'new',
+  //   buyers: [ [ 'ian', 2 ], [ 'was', 25 ] ],
+  //   items: [ { name: 'bag bag bag', totalPrice: 2, ian: 1, was: 22 } ],
+  //   finalItems: [ { name: 'tax', totalPrice: 5, was: 3, ian: 1 } ]
+  // }
 
   function loadReceipt() {
+    let receiptData: {
+      user: string;
+    } & FormMap = {
+      user: "",
+      receiptName: "",
+      buyers: [],
+      items: [],
+      finalItems: [],
+    };
+
     fetch(loadReceiptURL, {
       method: "POST",
       headers: {
@@ -124,9 +158,18 @@ export default function ReceiptEditor() {
       },
       body: JSON.stringify({ receiptID: "token" }),
     })
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        receiptData = data;
+
+        if (!receiptData) return;
+        const { user, ...finalReceiptData } = receiptData;
+
+        console.log(user);
+        setReceiptName(finalReceiptData.receiptName);
+        setNames(finalReceiptData.buyers);
+        setItems(convertItemsObject(finalReceiptData.items));
+        setLastItems(convertItemsObject(finalReceiptData.finalItems));
       })
       .catch((error) => console.error(error));
   }
@@ -159,6 +202,16 @@ export default function ReceiptEditor() {
       </ErrorContext.Provider>
       <Button onClick={sendCreateReceiptRequest}>Create Receipt</Button>
       <Button onClick={loadReceipt}>Load</Button>
+      <Button
+        onClick={() =>
+          convertItemsObject([
+            { name: "bag bag bag", totalPrice: 2, ian: 1, was: 22 },
+            { name: "bag f", totalPrice: 2, ian: 1, was: 22 },
+          ])
+        }
+      >
+        Convert
+      </Button>
     </>
   );
 }
