@@ -10,7 +10,9 @@ import { useImmer } from "use-immer";
 const createReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
 // const createReceiptURL = "http://localhost:3000/createReceipt";
-const loadReceiptURL = "http://localhost:3000/loadReceipt";
+const loadReceiptURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/loadReceipt";
+// const loadReceiptURL = "http://localhost:3000/loadReceipt";
 
 interface UpdateItemsMap {
   [key: string]: {
@@ -156,7 +158,9 @@ export default function ReceiptEditor() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ receiptID: window.location.pathname.substring(1) }),
+      body: JSON.stringify({
+        receiptID: window.location.pathname.substring(1),
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
