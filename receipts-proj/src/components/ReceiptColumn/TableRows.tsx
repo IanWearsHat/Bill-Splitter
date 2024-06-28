@@ -4,7 +4,6 @@ import { PriceInput } from "../lib/PriceInput";
 interface UpdateItemsMap {
   [key: string]: {
     id: number;
-    name: string;
     buyers: { [key: string]: number };
     totalPrice: number;
   };

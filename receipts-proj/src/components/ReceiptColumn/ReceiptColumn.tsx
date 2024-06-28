@@ -1,31 +1,30 @@
-import { useImmer } from "use-immer";
-
 import "./ReceiptColumn.css";
 import TableReceipt from "./TableReceipt";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 interface ReceiptColumnProps {
   selectedName: string;
+  items: UpdateItemsMap;
+  setItems: (updater: (draft: UpdateItemsMap) => void) => void;
+  lastItems: UpdateItemsMap;
+  setLastItems: (updater: (draft: UpdateItemsMap) => void) => void;
 }
 
 interface UpdateItemsMap {
   [key: string]: {
     id: number;
-    name: string;
     buyers: { [key: string]: number };
     totalPrice: number;
   };
 }
 
-export default function ReceiptColumn({ selectedName }: ReceiptColumnProps) {
-  const [items, setItems] = useImmer<UpdateItemsMap>({});
-  const [lastItems, setLastItems] = useImmer<UpdateItemsMap>({});
-
-  useEffect(() => {
-    console.log(items);
-    console.log(lastItems);
-  }, [items, lastItems]);
-
+export default function ReceiptColumn({
+  selectedName,
+  items,
+  setItems,
+  lastItems,
+  setLastItems,
+}: ReceiptColumnProps) {
   const calculateTotal = useCallback((items: UpdateItemsMap) => {
     let total = 0;
     Object.values(items).forEach((item) => {

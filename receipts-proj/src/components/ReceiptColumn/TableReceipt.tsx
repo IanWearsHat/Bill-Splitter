@@ -30,7 +30,6 @@ interface TableReceiptProps {
 interface UpdateItemsMap {
   [key: string]: {
     id: number;
-    name: string;
     buyers: { [key: string]: number };
     totalPrice: number;
   };

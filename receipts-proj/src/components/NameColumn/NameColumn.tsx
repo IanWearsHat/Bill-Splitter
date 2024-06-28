@@ -13,17 +13,20 @@ import "./NameColumn.css";
 
 interface NameColumnProps {
   selectedName: string;
+  names: Array<string>;
+  setNames: (value: Array<string>) => void;
   onButtonClick: (value: string) => void;
 }
 
 export default function NameColumn({
   selectedName,
+  names,
+  setNames,
   onButtonClick,
 }: NameColumnProps) {
   const [currentName, setName] = useState("");
-  const [names, setNames] = useState<Array<string>>([]);
+  
   const [open, setOpen] = useState(false);
-
   const [view, setView] = useState("list");
 
   const handleChange = (
