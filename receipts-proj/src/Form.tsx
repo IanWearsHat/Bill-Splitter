@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs";
 import "./Form.css";
 
-// const createAccountURL =
-//   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createAccount";
-// const loginURL =
-//   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/login";
-const createAccountURL = "http://localhost:3000/createNewAccount";
-const loginURL = "http://localhost:3000/login";
+const createAccountURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createAccount";
+const loginURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/login";
+// const createAccountURL = "http://localhost:3000/createNewAccount";
+// const loginURL = "http://localhost:3000/login";
 
 const saltRounds = 10;
 

@@ -7,7 +7,10 @@ import { ErrorContext } from "./ErrorContext";
 import { Button, Input } from "@mui/material";
 import { useImmer } from "use-immer";
 
-const createReceiptURL = "http://localhost:3000/createReceipt";
+const createReceiptURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
+// const createReceiptURL = "http://localhost:3000/createReceipt";
+const loadReceiptURL = "http://localhost:3000/loadReceipt";
 
 interface UpdateItemsMap {
   [key: string]: {
@@ -113,6 +116,21 @@ export default function ReceiptEditor() {
       .catch((error) => console.error(error));
   }
 
+  function loadReceipt() {
+    fetch(loadReceiptURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ receiptID: "token" }),
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error(error));
+  }
+
   return (
     <>
       <Input
@@ -139,7 +157,8 @@ export default function ReceiptEditor() {
           />
         </div>
       </ErrorContext.Provider>
-      <Button onClick={sendCreateReceiptRequest}>Print</Button>
+      <Button onClick={sendCreateReceiptRequest}>Create Receipt</Button>
+      <Button onClick={loadReceipt}>Load</Button>
     </>
   );
 }
