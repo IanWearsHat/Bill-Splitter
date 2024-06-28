@@ -1,18 +1,12 @@
 import { Button, TableCell, TableRow } from "@mui/material";
 import { PriceInput } from "../lib/PriceInput";
+import { ItemsMap } from "../ReceiptEditor/ItemsMap";
 
-interface UpdateItemsMap {
-  [key: string]: {
-    id: number;
-    buyers: { [key: string]: number };
-    totalPrice: number;
-  };
-}
 
 interface TableRowsProps {
   selectedName: string;
-  items: UpdateItemsMap;
-  setItems: (updater: (draft: UpdateItemsMap) => void) => void;
+  items: ItemsMap;
+  setItems: (updater: (draft: ItemsMap) => void) => void;
 }
 
 export default function TableRows({
@@ -37,7 +31,7 @@ export default function TableRows({
                 value.buyers[selectedName] ? value.buyers[selectedName] : 0
               }
               updateReceiptPrice={(newPrice: number) => {
-                setItems((draft: UpdateItemsMap) => {
+                setItems((draft: ItemsMap) => {
                   draft[receiptItemName]["buyers"][selectedName] = newPrice;
                 });
               }}
@@ -49,7 +43,7 @@ export default function TableRows({
             {" / "}
             <PriceInput
               updateReceiptPrice={(newPrice: number) => {
-                setItems((draft: UpdateItemsMap) => {
+                setItems((draft: ItemsMap) => {
                   draft[receiptItemName]["totalPrice"] = newPrice;
                 });
               }}

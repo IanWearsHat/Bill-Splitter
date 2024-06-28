@@ -12,27 +12,20 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-import "./ReceiptColumn.css";
 import TableRows from "./TableRows";
+import { ItemsMap } from "../ReceiptEditor/ItemsMap";
+import "./ReceiptColumn.css";
 
 let nextId = 0;
 interface TableReceiptProps {
   selectedName: string;
-  items: UpdateItemsMap;
-  setItems: (updater: (draft: UpdateItemsMap) => void) => void;
+  items: ItemsMap;
+  setItems: (updater: (draft: ItemsMap) => void) => void;
   isTotalCalculation?: boolean;
   subtotal?: number;
   total?: number;
   userSubtotal?: number;
   userTotal?: number;
-}
-
-interface UpdateItemsMap {
-  [key: string]: {
-    id: number;
-    buyers: { [key: string]: number };
-    totalPrice: number;
-  };
 }
 
 export default function TableReceipt({

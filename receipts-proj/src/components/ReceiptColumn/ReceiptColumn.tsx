@@ -1,21 +1,15 @@
-import "./ReceiptColumn.css";
-import TableReceipt from "./TableReceipt";
 import { useCallback } from "react";
+
+import { ItemsMap } from "../ReceiptEditor/ItemsMap";
+import TableReceipt from "./TableReceipt";
+import "./ReceiptColumn.css";
 
 interface ReceiptColumnProps {
   selectedName: string;
-  items: UpdateItemsMap;
-  setItems: (updater: (draft: UpdateItemsMap) => void) => void;
-  lastItems: UpdateItemsMap;
-  setLastItems: (updater: (draft: UpdateItemsMap) => void) => void;
-}
-
-interface UpdateItemsMap {
-  [key: string]: {
-    id: number;
-    buyers: { [key: string]: number };
-    totalPrice: number;
-  };
+  items: ItemsMap;
+  setItems: (updater: (draft: ItemsMap) => void) => void;
+  lastItems: ItemsMap;
+  setLastItems: (updater: (draft: ItemsMap) => void) => void;
 }
 
 export default function ReceiptColumn({
@@ -25,7 +19,7 @@ export default function ReceiptColumn({
   lastItems,
   setLastItems,
 }: ReceiptColumnProps) {
-  const calculateTotal = useCallback((items: UpdateItemsMap) => {
+  const calculateTotal = useCallback((items: ItemsMap) => {
     let total = 0;
     Object.values(items).forEach((item) => {
       total += item.totalPrice;
@@ -34,7 +28,7 @@ export default function ReceiptColumn({
   }, []);
 
   const calculateUserTotal = useCallback(
-    (selectedName: string, items: UpdateItemsMap) => {
+    (selectedName: string, items: ItemsMap) => {
       let total = 0;
       Object.values(items).map((item) => {
         if (item.buyers[selectedName]) total += item.buyers[selectedName];

@@ -1,11 +1,18 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { Button, Input } from "@mui/material";
+import { useImmer } from "use-immer";
+
+import { ErrorContext } from "./ErrorContext";
 import NameColumn from "../NameColumn/NameColumn";
 import ReceiptColumn from "../ReceiptColumn/ReceiptColumn";
 
+import { ItemsMap } from "./ItemsMap";
+import {
+  FormMap,
+  convertItemsObject,
+  createFormData,
+} from "./formCreationHelpers";
 import "./ReceiptEditor.css";
-import { ErrorContext } from "./ErrorContext";
-import { Button, Input } from "@mui/material";
-import { useImmer } from "use-immer";
 
 const createReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
@@ -14,103 +21,14 @@ const loadReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/loadReceipt";
 // const loadReceiptURL = "http://localhost:3000/loadReceipt";
 
-interface UpdateItemsMap {
-  [key: string]: {
-    id: number;
-    buyers: { [key: string]: number };
-    totalPrice: number;
-  };
-}
-
-interface FormMap {
-  receiptName: string;
-  buyers: Array<Array<string | number>>;
-  items: Array<{ [key: string]: string | number }>;
-  finalItems: Array<{ [key: string]: string | number }>;
-}
-
-function createItemsList(
-  items: UpdateItemsMap,
-  buyersToPrices: { [key: string]: number }
-) {
-  const itemsArr: Array<{
-    [key: string]: number | string;
-  }> = [];
-  Object.entries(items).map(([itemName, itemData]) => {
-    itemsArr.push({
-      name: itemName,
-      totalPrice: itemData.totalPrice,
-      ...itemData.buyers,
-    });
-
-    // Adds total from this item for that buyer
-    Object.entries(itemData.buyers).map(([buyerName, amountOwed]) => {
-      buyersToPrices[buyerName] += amountOwed;
-    });
-  });
-  return itemsArr;
-}
-
-function createFormData(
-  receiptName: string,
-  names: Array<Array<string | number>>,
-  items: UpdateItemsMap,
-  lastItems: UpdateItemsMap
-) {
-  const receipt: FormMap = {
-    receiptName: receiptName,
-    buyers: [],
-    items: [],
-    finalItems: [],
-  };
-
-  const buyersToPrices: { [key: string]: number } = {};
-  names.map((name) => {
-    buyersToPrices[name[0]] = 0;
-  });
-
-  receipt.items = createItemsList(items, buyersToPrices);
-  receipt.finalItems = createItemsList(lastItems, buyersToPrices);
-
-  const buyersList: Array<Array<string | number>> = [];
-  Object.entries(buyersToPrices).map(([name, amountOwed]) => {
-    buyersList.push([name, amountOwed]);
-  });
-  receipt.buyers = buyersList;
-
-  return receipt;
-}
-
-function convertItemsObject(items: Array<{ [key: string]: string | number }>) {
-  const itemsObj: UpdateItemsMap = {};
-  for (let i = 0; i < items.length; i++) {
-    const { name, totalPrice, ...restItems } = items[i];
-
-    itemsObj[name] = {
-      id: i,
-      buyers: { ...restItems } as {
-        [key: string]: number;
-      },
-      totalPrice: totalPrice as number,
-    };
-  }
-  console.log(itemsObj);
-  return itemsObj;
-}
-
 export default function ReceiptEditor() {
   const [selectedName, setSelectedName] = useState<string>("");
   const [receiptName, setReceiptName] = useState<string>("");
 
   const [names, setNames] = useState<Array<Array<string | number>>>([]);
 
-  const [items, setItems] = useImmer<UpdateItemsMap>({});
-  const [lastItems, setLastItems] = useImmer<UpdateItemsMap>({});
-
-  useEffect(() => {
-    console.log(items);
-    console.log(lastItems);
-  }, [items, lastItems]);
+  const [items, setItems] = useImmer<ItemsMap>({});
+  const [lastItems, setLastItems] = useImmer<ItemsMap>({});
 
   function sendCreateReceiptRequest() {
     const token = localStorage.getItem("token");
@@ -142,7 +60,7 @@ export default function ReceiptEditor() {
   //   finalItems: [ { name: 'tax', totalPrice: 5, was: 3, ian: 1 } ]
   // }
 
-  function loadReceipt() {
+  const loadReceipt = useCallback(() => {
     let receiptData: {
       user: string;
     } & FormMap = {
@@ -176,7 +94,16 @@ export default function ReceiptEditor() {
         setLastItems(convertItemsObject(finalReceiptData.finalItems));
       })
       .catch((error) => console.error(error));
-  }
+  }, [setItems, setLastItems]);
+
+  useEffect(() => {
+    loadReceipt();
+  }, [loadReceipt]);
+
+  useEffect(() => {
+    console.log(items);
+    console.log(lastItems);
+  }, [items, lastItems]);
 
   return (
     <>
@@ -206,16 +133,6 @@ export default function ReceiptEditor() {
       </ErrorContext.Provider>
       <Button onClick={sendCreateReceiptRequest}>Create Receipt</Button>
       <Button onClick={loadReceipt}>Load</Button>
-      <Button
-        onClick={() =>
-          convertItemsObject([
-            { name: "bag bag bag", totalPrice: 2, ian: 1, was: 22 },
-            { name: "bag f", totalPrice: 2, ian: 1, was: 22 },
-          ])
-        }
-      >
-        Convert
-      </Button>
     </>
   );
 }

@@ -108,7 +108,7 @@ export default function NameColumn({
               setOpen(true);
             } else {
               setName("");
-              setNames([...names, [currentName, 0]]);
+              setNames([...names, [currentName, -1]]);
             }
           }}
         >
