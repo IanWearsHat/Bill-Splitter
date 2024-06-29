@@ -2,6 +2,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Button, Input } from "@mui/material";
 import { useImmer } from "use-immer";
 
+import { ObjectContext } from "./ObjectContext";
 import { ErrorContext } from "./ErrorContext";
 import NameColumn from "../NameColumn/NameColumn";
 import ReceiptColumn from "../ReceiptColumn/ReceiptColumn";
@@ -96,6 +97,7 @@ export default function ReceiptEditor() {
       .catch((error) => console.error(error));
   }, [setItems, setLastItems]);
 
+  // attempt to load receipt on page load
   useEffect(() => {
     loadReceipt();
   }, [loadReceipt]);
@@ -115,22 +117,25 @@ export default function ReceiptEditor() {
         }
       />
       <ErrorContext.Provider value={""}>
-        <div id="editor">
-          <NameColumn
-            selectedName={selectedName}
-            names={names}
-            setNames={setNames}
-            onButtonClick={setSelectedName}
-          />
-          <ReceiptColumn
-            selectedName={selectedName}
-            items={items}
-            setItems={setItems}
-            lastItems={lastItems}
-            setLastItems={setLastItems}
-          />
-        </div>
+        <ObjectContext.Provider
+          value={{
+            selectedName,
+            setSelectedName,
+            names,
+            setNames,
+            items,
+            setItems,
+            lastItems,
+            setLastItems,
+          }}
+        >
+          <div id="editor">
+            <NameColumn />
+            <ReceiptColumn />
+          </div>
+        </ObjectContext.Provider>
       </ErrorContext.Provider>
+
       <Button onClick={sendCreateReceiptRequest}>Create Receipt</Button>
       <Button onClick={loadReceipt}>Load</Button>
     </>

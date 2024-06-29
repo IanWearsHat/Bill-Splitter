@@ -71,6 +71,7 @@ export default function TableReceipt({
               items={items}
               setItems={setItems}
             />
+
             <TableRow>
               <TableCell component="th" scope="row" align="right" colSpan={6}>
                 <div id="addNameGroup">

@@ -2,7 +2,6 @@ import { Button, TableCell, TableRow } from "@mui/material";
 import { PriceInput } from "../lib/PriceInput";
 import { ItemsMap } from "../ReceiptEditor/ItemsMap";
 
-
 interface TableRowsProps {
   selectedName: string;
   items: ItemsMap;

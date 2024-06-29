@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   ToggleButton,
   ToggleButtonGroup,
@@ -9,20 +9,12 @@ import {
 } from "@mui/material";
 
 import "./NameColumn.css";
+import { ObjectContext } from "../ReceiptEditor/ObjectContext";
 
-interface NameColumnProps {
-  selectedName: string;
-  names: Array<Array<string | number>>;
-  setNames: (value: Array<Array<string | number>>) => void;
-  onButtonClick: (value: string) => void;
-}
+export default function NameColumn() {
+  const { selectedName, setSelectedName, names, setNames } =
+    useContext(ObjectContext);
 
-export default function NameColumn({
-  selectedName,
-  names,
-  setNames,
-  onButtonClick,
-}: NameColumnProps) {
   const [currentName, setName] = useState("");
 
   const [open, setOpen] = useState(false);
@@ -68,9 +60,9 @@ export default function NameColumn({
               className="modifiedButton"
               onClick={() => {
                 if (selectedName === name[0]) {
-                  onButtonClick("");
+                  setSelectedName("");
                 } else {
-                  onButtonClick(name[0] as string);
+                  setSelectedName(name[0] as string);
                 }
               }}
               color="primary"

@@ -1,24 +1,14 @@
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 
+import { ObjectContext } from "../ReceiptEditor/ObjectContext";
 import { ItemsMap } from "../ReceiptEditor/ItemsMap";
 import TableReceipt from "./TableReceipt";
 import "./ReceiptColumn.css";
 
-interface ReceiptColumnProps {
-  selectedName: string;
-  items: ItemsMap;
-  setItems: (updater: (draft: ItemsMap) => void) => void;
-  lastItems: ItemsMap;
-  setLastItems: (updater: (draft: ItemsMap) => void) => void;
-}
+export default function ReceiptColumn() {
+  const { selectedName, items, setItems, lastItems, setLastItems } =
+    useContext(ObjectContext);
 
-export default function ReceiptColumn({
-  selectedName,
-  items,
-  setItems,
-  lastItems,
-  setLastItems,
-}: ReceiptColumnProps) {
   const calculateTotal = useCallback((items: ItemsMap) => {
     let total = 0;
     Object.values(items).forEach((item) => {
