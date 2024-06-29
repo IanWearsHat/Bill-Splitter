@@ -1,4 +1,5 @@
 const MongoClient = require("/opt/node_modules/mongodb").MongoClient;
+const { verifyToken } = require("/opt/authentication.js");
 
 const USER = process.env.USER;
 const PASS = process.env.PASS;
@@ -35,6 +36,12 @@ exports.handler = async (event, context) => {
 
   const body = JSON.parse(event.body);
 
+  let user = "";
+  try {
+    const decoded = await verifyToken(body.token);
+    user = decoded.user;
+  } catch (err) {}
+
   const db = await connectToDatabase();
 
   const users = db.collection("users");
@@ -51,7 +58,7 @@ exports.handler = async (event, context) => {
         "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
       },
       body: JSON.stringify({
-        user: cursor.user,
+        isSameUser: cursor.user == user,
         buyers: cursor.receipts[0].buyers,
         items: cursor.receipts[0].items,
         finalItems: cursor.receipts[0].finalItems,

@@ -10,11 +10,12 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import TableRows from "./TableRows";
 import { ItemsMap } from "../ReceiptEditor/ItemsMap";
 import "./ReceiptColumn.css";
+import { IsReadOnlyContext } from "../ReceiptEditor/IsReadOnlyContext";
 
 let nextId = 0;
 interface TableReceiptProps {
@@ -53,6 +54,8 @@ export default function TableReceipt({
     setOpen(false);
   };
 
+  const isReadOnly = useContext(IsReadOnlyContext);
+
   return (
     <div className="itemsList">
       <TableContainer component={Paper}>
@@ -67,46 +70,49 @@ export default function TableReceipt({
             )}
 
             <TableRows
+              isReadOnly={isReadOnly}
               selectedName={selectedName}
               items={items}
               setItems={setItems}
             />
 
-            <TableRow>
-              <TableCell component="th" scope="row" align="right" colSpan={6}>
-                <div id="addNameGroup">
-                  <TextField
-                    id="outlined-basic"
-                    label="Add Item"
-                    variant="outlined"
-                    value={itemName}
-                    onChange={(e) => setItemName(e.target.value)}
-                  />
-                  <Button
-                    variant="contained"
-                    onClick={() => {
-                      if (itemName in items) {
-                        setOpen(true);
-                      } else {
-                        setItems((draft) => {
-                          return {
-                            ...draft,
-                            [itemName]: {
-                              id: nextId++,
-                              buyers: {},
-                              totalPrice: 0,
-                            },
-                          };
-                        });
-                        setItemName("");
-                      }
-                    }}
-                  >
-                    Add
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
+            {!isReadOnly && (
+              <TableRow>
+                <TableCell component="th" scope="row" align="right" colSpan={6}>
+                  <div id="addNameGroup">
+                    <TextField
+                      id="outlined-basic"
+                      label="Add Item"
+                      variant="outlined"
+                      value={itemName}
+                      onChange={(e) => setItemName(e.target.value)}
+                    />
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        if (itemName in items) {
+                          setOpen(true);
+                        } else {
+                          setItems((draft) => {
+                            return {
+                              ...draft,
+                              [itemName]: {
+                                id: nextId++,
+                                buyers: {},
+                                totalPrice: 0,
+                              },
+                            };
+                          });
+                          setItemName("");
+                        }
+                      }}
+                    >
+                      Add
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
 
             {isTotalCalculation && (
               <TableRow>

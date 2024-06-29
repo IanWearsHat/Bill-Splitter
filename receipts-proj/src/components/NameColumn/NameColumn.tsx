@@ -10,6 +10,7 @@ import {
 
 import "./NameColumn.css";
 import { ObjectContext } from "../ReceiptEditor/ObjectContext";
+import { IsReadOnlyContext } from "../ReceiptEditor/IsReadOnlyContext";
 
 export default function NameColumn() {
   const { selectedName, setSelectedName, names, setNames } =
@@ -45,6 +46,8 @@ export default function NameColumn() {
     return false;
   }
 
+  const isReadOnly = useContext(IsReadOnlyContext);
+
   return (
     <div id="nameColumn">
       <ToggleButtonGroup
@@ -71,42 +74,47 @@ export default function NameColumn() {
             >
               {name[0]}
             </ToggleButton>
-            <Button
-              id={name[0] as string}
-              variant="outlined"
-              color="error"
-              onClick={() => {
-                setNames(names.filter((n) => n[0] !== name[0]));
-              }}
-            >
-              Delete
-            </Button>
+
+            {!isReadOnly && (
+              <Button
+                id={name[0] as string}
+                variant="outlined"
+                color="error"
+                onClick={() => {
+                  setNames(names.filter((n) => n[0] !== name[0]));
+                }}
+              >
+                Delete
+              </Button>
+            )}
           </div>
         ))}
       </ToggleButtonGroup>
 
-      <div id="addNameGroup">
-        <TextField
-          id="outlined-basic"
-          label="Add Name"
-          variant="outlined"
-          value={currentName}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          onClick={() => {
-            if (valueInArray(currentName, names)) {
-              setOpen(true);
-            } else {
-              setName("");
-              setNames([...names, [currentName, -1]]);
-            }
-          }}
-        >
-          Add
-        </Button>
-      </div>
+      {!isReadOnly && (
+        <div id="addNameGroup">
+          <TextField
+            id="outlined-basic"
+            label="Add Name"
+            variant="outlined"
+            value={currentName}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (valueInArray(currentName, names)) {
+                setOpen(true);
+              } else {
+                setName("");
+                setNames([...names, [currentName, -1]]);
+              }
+            }}
+          >
+            Add
+          </Button>
+        </div>
+      )}
       <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
         <Alert variant="filled" onClose={handleClose} severity="error">
           Error: Name already exists

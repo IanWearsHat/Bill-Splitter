@@ -14,6 +14,7 @@ import {
   createFormData,
 } from "./formCreationHelpers";
 import "./ReceiptEditor.css";
+import { IsReadOnlyContext } from "./IsReadOnlyContext";
 
 const createReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
@@ -31,8 +32,11 @@ export default function ReceiptEditor() {
   const [items, setItems] = useImmer<ItemsMap>({});
   const [lastItems, setLastItems] = useImmer<ItemsMap>({});
 
+  const [isReadOnly, setIsReadOnly] = useState(true);
+
   function sendCreateReceiptRequest() {
     const token = localStorage.getItem("token");
+    console.log(token);
     if (!token) return;
 
     const data = {
@@ -62,10 +66,13 @@ export default function ReceiptEditor() {
   // }
 
   const loadReceipt = useCallback(() => {
+    const token = localStorage.getItem("token");
+    if (!token) setIsReadOnly(true);
+
     let receiptData: {
-      user: string;
+      isSameUser: boolean;
     } & FormMap = {
-      user: "",
+      isSameUser: false,
       receiptName: "",
       buyers: [],
       items: [],
@@ -78,6 +85,7 @@ export default function ReceiptEditor() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        token: token,
         receiptID: window.location.pathname.substring(1),
       }),
     })
@@ -86,9 +94,9 @@ export default function ReceiptEditor() {
         receiptData = data;
 
         if (!receiptData) return;
-        const { user, ...finalReceiptData } = receiptData;
-
-        console.log(user);
+        const { isSameUser, ...finalReceiptData } = receiptData;
+        console.log(isSameUser);
+        setIsReadOnly(!isSameUser);
         setReceiptName(finalReceiptData.receiptName);
         setNames(finalReceiptData.buyers);
         setItems(convertItemsObject(finalReceiptData.items));
@@ -108,36 +116,55 @@ export default function ReceiptEditor() {
   }, [items, lastItems]);
 
   return (
-    <>
-      <Input
-        placeholder="Enter Receipt Name"
-        value={receiptName}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setReceiptName(event.target.value)
-        }
-      />
-      <ErrorContext.Provider value={""}>
-        <ObjectContext.Provider
-          value={{
-            selectedName,
-            setSelectedName,
-            names,
-            setNames,
-            items,
-            setItems,
-            lastItems,
-            setLastItems,
-          }}
-        >
-          <div id="editor">
-            <NameColumn />
-            <ReceiptColumn />
-          </div>
-        </ObjectContext.Provider>
-      </ErrorContext.Provider>
+    <div id="page">
+      <div id="allReceiptInfo">
+        {isReadOnly ? (
+          <h1 id="receiptName">{receiptName}</h1>
+        ) : (
+          <Input
+            placeholder="Enter Receipt Name"
+            value={receiptName}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setReceiptName(event.target.value)
+            }
+          />
+        )}
 
-      <Button onClick={sendCreateReceiptRequest}>Create Receipt</Button>
-      <Button onClick={loadReceipt}>Load</Button>
-    </>
+        <ErrorContext.Provider value={""}>
+          <ObjectContext.Provider
+            value={{
+              selectedName,
+              setSelectedName,
+              names,
+              setNames,
+              items,
+              setItems,
+              lastItems,
+              setLastItems,
+            }}
+          >
+            <IsReadOnlyContext.Provider value={isReadOnly}>
+              <div id="editor">
+                <NameColumn />
+                <ReceiptColumn />
+              </div>
+            </IsReadOnlyContext.Provider>
+          </ObjectContext.Provider>
+        </ErrorContext.Provider>
+
+        {!isReadOnly && (
+          <Button onClick={sendCreateReceiptRequest}>Create Receipt</Button>
+        )}
+      </div>
+      <Button onClick={() => setIsReadOnly(false)}>click</Button>
+    </div>
   );
 }
+/*
+
+JWT token user exists and matches user from receipt:        READ AND WRITE
+
+JWT token user exists and doesn't match user from receipt:  READ ONLY
+JWT token user does not exist:                              READ ONLY
+
+*/

@@ -35,7 +35,10 @@ function handleSubmit(event: React.SyntheticEvent) {
         body: JSON.stringify(body),
       })
         .then((response) => response.text())
-        .then((data) => console.log(data))
+        .then((data) => {
+          console.log(data);
+          localStorage.setItem("token", data);
+        })
         .catch((error) => console.error(error));
     }
   );
