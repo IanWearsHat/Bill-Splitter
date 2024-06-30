@@ -23,7 +23,7 @@ function _createItemsList(
 
     // Adds total from this item for that buyer
     Object.entries(itemData.buyers).map(([buyerName, amountOwed]) => {
-      buyersToPrices[buyerName] += amountOwed;
+      if (buyerName in buyersToPrices) buyersToPrices[buyerName] += amountOwed;
     });
   });
   return itemsArr;
@@ -59,7 +59,9 @@ export function createFormData(
   return receipt;
 }
 
-export function convertItemsObject(items: Array<{ [key: string]: string | number }>) {
+export function convertItemsObject(
+  items: Array<{ [key: string]: string | number }>
+) {
   const itemsObj: ItemsMap = {};
   for (let i = 0; i < items.length; i++) {
     const { name, totalPrice, ...restItems } = items[i];

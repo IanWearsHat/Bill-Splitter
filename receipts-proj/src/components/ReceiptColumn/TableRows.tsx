@@ -6,14 +6,14 @@ interface TableRowsProps {
   selectedName: string;
   items: ItemsMap;
   setItems: (updater: (draft: ItemsMap) => void) => void;
-  isReadOnly: boolean;
+  isEditMode: boolean;
 }
 
 export default function TableRows({
   selectedName,
   items,
   setItems,
-  isReadOnly,
+  isEditMode,
 }: TableRowsProps) {
   return (
     <>
@@ -27,11 +27,7 @@ export default function TableRows({
           </TableCell>
 
           <TableCell align="right">
-            {isReadOnly ? (
-              <p style={{ display: "inline-block" }}>
-                {value.buyers[selectedName] && `${value.buyers[selectedName]} /`}
-              </p>
-            ) : (
+            {isEditMode ? (
               <>
                 <PriceInput
                   inputValue={
@@ -51,13 +47,14 @@ export default function TableRows({
                 />
                 <p style={{ display: "inline-block" }}>/</p>
               </>
+            ) : (
+              <p style={{ display: "inline-block" }}>
+                {value.buyers[selectedName] &&
+                  `${value.buyers[selectedName]} /`}
+              </p>
             )}
 
-            {isReadOnly ? (
-              <p style={{ display: "inline-block" }}>
-                {value["totalPrice"] ? value["totalPrice"] : 0}
-              </p>
-            ) : (
+            {isEditMode ? (
               <PriceInput
                 inputValue={value["totalPrice"] ? value["totalPrice"] : 0}
                 updateReceiptPrice={(newPrice: number) => {
@@ -67,9 +64,13 @@ export default function TableRows({
                 }}
                 placeholder="Enter total"
               />
+            ) : (
+              <p style={{ display: "inline-block" }}>
+                {value["totalPrice"] ? value["totalPrice"] : 0}
+              </p>
             )}
 
-            {!isReadOnly && (
+            {isEditMode && (
               <Button
                 id={receiptItemName}
                 variant="outlined"

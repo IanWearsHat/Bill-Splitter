@@ -10,7 +10,7 @@ import {
 
 import "./NameColumn.css";
 import { ObjectContext } from "../ReceiptEditor/ObjectContext";
-import { IsReadOnlyContext } from "../ReceiptEditor/IsReadOnlyContext";
+import { isEditModeContext } from "../ReceiptEditor/isEditModeContext";
 
 export default function NameColumn() {
   const { selectedName, setSelectedName, names, setNames } =
@@ -46,7 +46,7 @@ export default function NameColumn() {
     return false;
   }
 
-  const isReadOnly = useContext(IsReadOnlyContext);
+  const isEditMode = useContext(isEditModeContext);
 
   return (
     <div id="nameColumn">
@@ -75,12 +75,13 @@ export default function NameColumn() {
               {name[0]}
             </ToggleButton>
 
-            {!isReadOnly && (
+            {isEditMode && (
               <Button
                 id={name[0] as string}
                 variant="outlined"
                 color="error"
                 onClick={() => {
+                  // console.log(names.filter((n) => n[0] !== name[0]))
                   setNames(names.filter((n) => n[0] !== name[0]));
                 }}
               >
@@ -91,7 +92,7 @@ export default function NameColumn() {
         ))}
       </ToggleButtonGroup>
 
-      {!isReadOnly && (
+      {isEditMode && (
         <div id="addNameGroup">
           <TextField
             id="outlined-basic"

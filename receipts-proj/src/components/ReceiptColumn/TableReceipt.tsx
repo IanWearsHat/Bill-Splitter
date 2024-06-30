@@ -15,7 +15,7 @@ import { useContext, useState } from "react";
 import TableRows from "./TableRows";
 import { ItemsMap } from "../ReceiptEditor/ItemsMap";
 import "./ReceiptColumn.css";
-import { IsReadOnlyContext } from "../ReceiptEditor/IsReadOnlyContext";
+import { isEditModeContext } from "../ReceiptEditor/isEditModeContext";
 
 let nextId = 0;
 interface TableReceiptProps {
@@ -54,7 +54,7 @@ export default function TableReceipt({
     setOpen(false);
   };
 
-  const isReadOnly = useContext(IsReadOnlyContext);
+  const isEditMode = useContext(isEditModeContext);
 
   return (
     <div className="itemsList">
@@ -70,13 +70,13 @@ export default function TableReceipt({
             )}
 
             <TableRows
-              isReadOnly={isReadOnly}
+              isEditMode={isEditMode}
               selectedName={selectedName}
               items={items}
               setItems={setItems}
             />
 
-            {!isReadOnly && (
+            {isEditMode && (
               <TableRow>
                 <TableCell component="th" scope="row" align="right" colSpan={6}>
                   <div id="addNameGroup">

@@ -20,3 +20,15 @@
 #editor {
     display: flex;
 }
+
+#header {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+
+#buttonSuite {
+    display: flex;
+    height: fit-content;
+    gap: 1em;
+}
