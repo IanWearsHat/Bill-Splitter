@@ -70,26 +70,59 @@ exports.handler = async (event, context) => {
   } catch (err) {
     return INVALID_TOKEN_ERROR;
   }
-
+  
   const db = await connectToDatabase();
   const users = db.collection("users");
-  const cursor = await users.find({ user: user });
-  if (!(await cursor.hasNext())) {
-    return USER_NOT_EXISTS_ERROR;
+
+  const { token, receiptID, ...receiptData } = body;
+
+  if (receiptID) {
+    const result = await users.updateOne(
+      { "receipts.id": receiptID },
+      {
+        $set: {
+          "receipts.$": {
+            id: receiptID,
+            ...receiptData,
+          },
+        },
+      }
+    );
+
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+      },
+      body: JSON.stringify({ message: result }),
+    };
+  } else {
+    const cursor = await users.find({ user: user });
+    if (!(await cursor.hasNext())) {
+      return USER_NOT_EXISTS_ERROR;
+    }
+    const newID = generateUniqueId();
+    const newReceipt = {
+      id: newID,
+      ...receiptData,
+    };
+
+    const result = await users.updateOne(
+      { user: user },
+      { $push: { receipts: newReceipt } }
+    );
+
+    console.log(`Updated ${result.modifiedCount} document`);
+    return {
+      statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+      },
+      body: JSON.stringify({ receiptID: newID }),
+    };
   }
-
-  const { token, ...receiptData } = body;
-
-  const newReceipt = {
-    id: generateUniqueId(),
-    ...receiptData,
-  };
-
-  const result = await users.updateOne(
-    { user: user },
-    { $push: { receipts: newReceipt } }
-  );
-
-  console.log(`Updated ${result.modifiedCount} document`);
-  return RECEIPT_CREATED_SUCCESS;
 };

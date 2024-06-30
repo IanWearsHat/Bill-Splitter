@@ -19,9 +19,9 @@ import {
 } from "./formCreationHelpers";
 import "./ReceiptEditor.css";
 
-// const createReceiptURL =
-//   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
-const sendReceiptURL = "http://localhost:3000/createReceipt";
+const sendReceiptURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
+// const sendReceiptURL = "http://localhost:3000/createReceipt";
 const loadReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/loadReceipt";
 // const loadReceiptURL = "http://localhost:3000/loadReceipt";
@@ -60,10 +60,10 @@ export default function ReceiptEditor() {
     })
       .then((response) => response.json())
       .then((data) => {
-        const dataJSON = JSON.parse(data);
-        if (dataJSON.receiptID) {
-          console.log(dataJSON.receiptID);
-          window.history.replaceState(null, "", dataJSON.receiptID);
+        console.log(data);
+        if (data.receiptID) {
+          console.log(data.receiptID);
+          window.history.replaceState(null, "", data.receiptID);
         }
       })
       .catch((error) => console.error(error));
@@ -147,6 +147,8 @@ export default function ReceiptEditor() {
         <Button
           onClick={() => {
             setReceiptShown(true);
+            setUserCanEdit(true);
+            setIsEditMode(true);
           }}
         >
           Create Receipt
