@@ -22,6 +22,9 @@ import "./ReceiptEditor.css";
 const sendReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
 // const sendReceiptURL = "http://localhost:3000/createReceipt";
+const sendDeleteURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/deleteReceipt";
+// const sendDeleteURL = "http://localhost:3000/deleteReceipt";
 const loadReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/loadReceipt";
 // const loadReceiptURL = "http://localhost:3000/loadReceipt";
@@ -40,7 +43,7 @@ export default function ReceiptEditor() {
 
   const [userCanEdit, setUserCanEdit] = useState(false);
 
-  function sendReceiptRequest(URL: string) {
+  function sendReceiptRequest() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
@@ -49,9 +52,8 @@ export default function ReceiptEditor() {
       receiptID: window.location.pathname.substring(1),
       ...createFormData(receiptName, names, items, lastItems),
     };
-    // console.log(data);
 
-    fetch(URL, {
+    fetch(sendReceiptURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,6 +67,28 @@ export default function ReceiptEditor() {
           console.log(data.receiptID);
           window.history.replaceState(null, "", data.receiptID);
         }
+      })
+      .catch((error) => console.error(error));
+  }
+  // left off on making correct checks for deleting
+  function sendDeleteRequest() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const data = {
+      token: token,
+      receiptID: window.location.pathname.substring(1),
+    };
+    fetch(sendDeleteURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
       })
       .catch((error) => console.error(error));
   }
@@ -181,7 +205,7 @@ export default function ReceiptEditor() {
                 {isEditMode && (
                   <>
                     <Button
-                      onClick={() => sendReceiptRequest(sendReceiptURL)}
+                      onClick={sendReceiptRequest}
                       variant="contained"
                       color="warning"
                       startIcon={<SaveIcon />}
@@ -189,7 +213,7 @@ export default function ReceiptEditor() {
                       save
                     </Button>
                     <Button
-                      onClick={() => {}}
+                      onClick={sendDeleteRequest}
                       variant="contained"
                       color="error"
                       startIcon={<DeleteIcon />}

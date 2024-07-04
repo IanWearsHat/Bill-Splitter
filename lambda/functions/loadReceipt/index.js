@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
     { "receipts.id": body.receiptID },
     { projection: { user: 1, "receipts.$": 1 } }
   );
-  if (cursor)
+  if (cursor && cursor.user && cursor.receipts)
     return {
       statusCode: 200,
       headers: {
