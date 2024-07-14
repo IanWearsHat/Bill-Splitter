@@ -7,12 +7,15 @@ export default function Landing() {
       <div className="hero">
         <div className="infoColumn">
           <h1>Share Receipts. Anywhere.</h1>
-          <p>Everyone knows what they owe with a simple link. Get started now.</p>
+          <p>
+            Everyone knows what they owe with a simple link. Get started now.
+          </p>
         </div>
 
-        <div className="formContainer">
-          <CredentialsForm />
-        </div>
+        {/* <div className="formContainer"> */}
+        <CredentialsForm isLoginForm={false} />
+
+        {/* </div> */}
       </div>
     </>
   );

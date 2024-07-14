@@ -7,20 +7,23 @@ import "./App.css";
 import Landing from "./pages/Landing/Landing";
 import UserProfile from "./components/UserProfile/UserProfile";
 import EditingPage from "./pages/EditingPage/EditingPage";
+import CredentialsForm from "./components/CredentialsForm/CredentialsForm";
+import Login from "./pages/Login/Login";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   return (
     <AuthContext.Provider value={{ loggedIn, setLoggedIn }}>
       <Router>
-        <UserProfile />
-        <Link to="/">Home</Link>
+        {/* <UserProfile /> */}
+        {/* <Link to="/">Home</Link>
         <hr />
-        <Link to="/editor">Editor</Link>
+        <Link to="/editor">Editor</Link> */}
 
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/editor" element={<EditingPage />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </Router>
     </AuthContext.Provider>

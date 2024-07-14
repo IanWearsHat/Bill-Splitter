@@ -3,7 +3,7 @@ import "./CredentialsForm.css";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../AuthContext";
 import { Button, CircularProgress, TextField } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const createAccountURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createAccount";
@@ -14,10 +14,12 @@ const loginURL =
 
 const saltRounds = 10;
 
-export default function CredentialsForm() {
-  const navigate = useNavigate();
+interface CredentialsFormProps {
+  isLoginForm: boolean;
+}
 
-  const isLoginForm = true;
+export default function CredentialsForm({ isLoginForm }: CredentialsFormProps) {
+  const navigate = useNavigate();
 
   const { setLoggedIn } = useContext(AuthContext);
 
@@ -75,47 +77,59 @@ export default function CredentialsForm() {
   }
 
   return (
-    <form id="submitForm" onSubmit={handleSubmit}>
-      <TextField
-        id="username"
-        label="Username"
-        variant="outlined"
-        onChange={(e) => setUser(e.target.value)}
-        required
-        fullWidth
-      />
-      <TextField
-        id="password"
-        label="Password"
-        variant="outlined"
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        fullWidth
-      />
-      <hr id="divider"/>
-      <Button
-        // sx={{
-        //   marginTop: "28px",
-        // }}
-        className="submitButton"
-        type="submit"
-        disabled={buttonIsDisabled}
-        variant="contained"
-      >
-        {buttonIsDisabled && (
-          <CircularProgress
-            size={24}
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              marginTop: "-12px",
-              marginLeft: "-12px",
-            }}
-          />
-        )}
-        {isLoginForm ? "Sign In" : "Create Account"}
-      </Button>
-    </form>
+    <div className="formContainer">
+      {isLoginForm && <h2 style={{ marginTop: 0 }}>Sign in</h2>}
+
+      <form id="submitForm" onSubmit={handleSubmit}>
+        <TextField
+          id="username"
+          label="Username"
+          variant="outlined"
+          onChange={(e) => setUser(e.target.value)}
+          required
+          fullWidth
+        />
+        <TextField
+          id="password"
+          label="Password"
+          variant="outlined"
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          fullWidth
+        />
+
+        <hr id="divider" />
+
+        <Button
+          className="submitButton"
+          type="submit"
+          disabled={buttonIsDisabled}
+          variant="contained"
+        >
+          {buttonIsDisabled && (
+            <CircularProgress
+              size={24}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                marginTop: "-12px",
+                marginLeft: "-12px",
+              }}
+            />
+          )}
+          {isLoginForm ? "Sign In" : "Create Account"}
+        </Button>
+      </form>
+      {isLoginForm ? (
+        <p style={{ textAlign: "center" }}>
+          or create account <Link to="/">here</Link>
+        </p>
+      ) : (
+        <p style={{ textAlign: "center" }}>
+          or sign in <Link to="/login">here</Link>
+        </p>
+      )}
+    </div>
   );
 }
