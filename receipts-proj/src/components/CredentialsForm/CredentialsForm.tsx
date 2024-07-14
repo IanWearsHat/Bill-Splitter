@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
-import "./Form.css";
+import "./CredentialsForm.css";
 import { useContext, useState } from "react";
-import { AuthContext } from "./AuthContext";
-import { Button, TextField } from "@mui/material";
+import { AuthContext } from "../../AuthContext";
+import { Button, CircularProgress, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const createAccountURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createAccount";
@@ -13,8 +14,10 @@ const loginURL =
 
 const saltRounds = 10;
 
-export default function Form() {
-  const isLoginForm = false;
+export default function CredentialsForm() {
+  const navigate = useNavigate();
+
+  const isLoginForm = true;
 
   const { setLoggedIn } = useContext(AuthContext);
 
@@ -37,6 +40,7 @@ export default function Form() {
         localStorage.setItem("token", data.token);
         setLoggedIn(true);
         setButtonIsDisabled(false);
+        navigate("/editor");
       })
       .catch((error) => {
         console.error(error);
@@ -86,6 +90,18 @@ export default function Form() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <Button type="submit" disabled={buttonIsDisabled} variant="contained">
+          {buttonIsDisabled && (
+            <CircularProgress
+              size={24}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                marginTop: "-12px",
+                marginLeft: "-12px",
+              }}
+            />
+          )}
           {isLoginForm ? "Login" : "Create Account"}
         </Button>
       </form>

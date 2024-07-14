@@ -1,17 +1,28 @@
 import { useState } from "react";
-import "./App.css";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+
 import { AuthContext } from "./AuthContext";
-import Form from "./Form";
-import ReceiptEditor from "./components/ReceiptEditor/ReceiptEditor";
+
+import "./App.css";
+import Landing from "./pages/Landing/Landing";
 import UserProfile from "./components/UserProfile/UserProfile";
+import EditingPage from "./pages/EditingPage/EditingPage";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   return (
     <AuthContext.Provider value={{ loggedIn, setLoggedIn }}>
-      <UserProfile />
-      <Form />
-      <ReceiptEditor />
+      <Router>
+        <UserProfile />
+        <Link to="/">Home</Link>
+        <hr />
+        <Link to="/editor">Editor</Link>
+
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/editor" element={<EditingPage />} />
+        </Routes>
+      </Router>
     </AuthContext.Provider>
   );
 }
