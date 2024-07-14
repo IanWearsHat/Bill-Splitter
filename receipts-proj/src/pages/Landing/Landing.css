@@ -1,0 +1,25 @@
+.hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 70vh;
+    width: 100vw;
+    
+    gap: 3em;
+}
+
+.formContainer {
+    background-color: rgb(248, 247, 247);
+    border: solid rgb(175, 174, 174) 1px;
+    border-radius: 4px;
+
+    padding: 2.5em;
+    width: 16em;
+}
+
+#divider {
+    width: 100%;
+    margin-top: 16px;
+    margin-bottom: 24px;
+}

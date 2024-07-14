@@ -75,36 +75,47 @@ export default function CredentialsForm() {
   }
 
   return (
-    <div id="formDiv">
-      <form id="submitForm" onSubmit={handleSubmit}>
-        <TextField
-          id="username"
-          label="Username"
-          variant="outlined"
-          onChange={(e) => setUser(e.target.value)}
-        />
-        <TextField
-          id="password"
-          label="Password"
-          variant="outlined"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button type="submit" disabled={buttonIsDisabled} variant="contained">
-          {buttonIsDisabled && (
-            <CircularProgress
-              size={24}
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                marginTop: "-12px",
-                marginLeft: "-12px",
-              }}
-            />
-          )}
-          {isLoginForm ? "Login" : "Create Account"}
-        </Button>
-      </form>
-    </div>
+    <form id="submitForm" onSubmit={handleSubmit}>
+      <TextField
+        id="username"
+        label="Username"
+        variant="outlined"
+        onChange={(e) => setUser(e.target.value)}
+        required
+        fullWidth
+      />
+      <TextField
+        id="password"
+        label="Password"
+        variant="outlined"
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        fullWidth
+      />
+      <hr id="divider"/>
+      <Button
+        // sx={{
+        //   marginTop: "28px",
+        // }}
+        className="submitButton"
+        type="submit"
+        disabled={buttonIsDisabled}
+        variant="contained"
+      >
+        {buttonIsDisabled && (
+          <CircularProgress
+            size={24}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              marginTop: "-12px",
+              marginLeft: "-12px",
+            }}
+          />
+        )}
+        {isLoginForm ? "Sign In" : "Create Account"}
+      </Button>
+    </form>
   );
 }
