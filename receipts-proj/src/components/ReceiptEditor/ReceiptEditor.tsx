@@ -70,7 +70,7 @@ export default function ReceiptEditor() {
       })
       .catch((error) => console.error(error));
   }
-  // left off on making correct checks for deleting
+
   function sendDeleteRequest() {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -86,9 +86,10 @@ export default function ReceiptEditor() {
       },
       body: JSON.stringify(data),
     })
-      .then((response) => response.json())
+      .then((response) => response.text())
       .then((data) => {
         console.log(data);
+        window.history.replaceState(null, "", "/");
       })
       .catch((error) => console.error(error));
   }
@@ -250,6 +251,7 @@ export default function ReceiptEditor() {
         </div>
       )}
     </div>
+    
   );
 }
 /*

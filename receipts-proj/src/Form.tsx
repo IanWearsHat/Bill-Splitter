@@ -67,10 +67,11 @@ export default function Form() {
       },
       body: JSON.stringify(body),
     })
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        localStorage.setItem("token", data);
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("pfpURL", data.pfpURL);
         setLoggedIn(true);
       })
       .catch((error) => console.error(error));
