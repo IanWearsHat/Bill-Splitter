@@ -1,5 +1,10 @@
 import ReceiptEditor from "../../components/ReceiptEditor/ReceiptEditor";
+import "./EditingPage.css";
 
 export default function EditingPage() {
-  return <ReceiptEditor />;
+  return (
+    <div className="container">
+      <ReceiptEditor />
+    </div>
+  );
 }

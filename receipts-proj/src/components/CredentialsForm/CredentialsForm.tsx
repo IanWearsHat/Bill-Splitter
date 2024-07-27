@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../AuthContext";
 import { Button, CircularProgress, TextField } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import OneClickButton from "../lib/OneClickButton";
 
 const createAccountURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createAccount";
@@ -100,26 +101,14 @@ export default function CredentialsForm({ isLoginForm }: CredentialsFormProps) {
 
         <hr id="divider" />
 
-        <Button
+        <OneClickButton
           className="submitButton"
           type="submit"
-          disabled={buttonIsDisabled}
+          buttonIsDisabled={buttonIsDisabled}
           variant="contained"
         >
-          {buttonIsDisabled && (
-            <CircularProgress
-              size={24}
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                marginTop: "-12px",
-                marginLeft: "-12px",
-              }}
-            />
-          )}
           {isLoginForm ? "Sign In" : "Create Account"}
-        </Button>
+        </OneClickButton>
       </form>
       {isLoginForm ? (
         <p style={{ textAlign: "center" }}>

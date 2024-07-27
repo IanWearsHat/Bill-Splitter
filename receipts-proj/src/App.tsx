@@ -22,8 +22,8 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/editor" element={<EditingPage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/editor/*" element={<EditingPage />} />
         </Routes>
       </Router>
     </AuthContext.Provider>

@@ -18,6 +18,8 @@ import {
   createFormData,
 } from "./formCreationHelpers";
 import "./ReceiptEditor.css";
+import OneClickButton from "../lib/OneClickButton";
+import { useNavigate } from "react-router-dom";
 
 const sendReceiptURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/createReceipt";
@@ -30,6 +32,8 @@ const loadReceiptURL =
 // const loadReceiptURL = "http://localhost:3000/loadReceipt";
 
 export default function ReceiptEditor() {
+  const navigate = useNavigate();
+
   const [selectedName, setSelectedName] = useState<string>("");
   const [receiptName, setReceiptName] = useState<string>("");
 
@@ -43,15 +47,23 @@ export default function ReceiptEditor() {
 
   const [userCanEdit, setUserCanEdit] = useState(false);
 
+  const [saveIsDisabled, setSaveIsDisabled] = useState(false);
+  const [deleteIsDisabled, setDeleteIsDisabled] = useState(false);
+
   function sendReceiptRequest() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
+    const receiptString = window.location.pathname
+      .replace("/editor", "")
+      .substring(1);
     const data = {
       token: token,
-      receiptID: window.location.pathname.substring(1),
+      receiptID: receiptString,
       ...createFormData(receiptName, names, items, lastItems),
     };
+
+    setSaveIsDisabled(true);
 
     fetch(sendReceiptURL, {
       method: "POST",
@@ -65,20 +77,34 @@ export default function ReceiptEditor() {
         console.log(data);
         if (data.receiptID) {
           console.log(data.receiptID);
-          window.history.replaceState(null, "", data.receiptID);
+          window.history.replaceState(
+            null,
+            "",
+            window.location.pathname + "/" + data.receiptID
+          );
         }
+        setSaveIsDisabled(false);
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        setSaveIsDisabled(false);
+      });
   }
 
   function sendDeleteRequest() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
+    const receiptString = window.location.pathname
+      .replace("/editor", "")
+      .substring(1);
+
     const data = {
       token: token,
-      receiptID: window.location.pathname.substring(1),
+      receiptID: receiptString,
     };
+
+    setDeleteIsDisabled(true);
     fetch(sendDeleteURL, {
       method: "POST",
       headers: {
@@ -89,9 +115,15 @@ export default function ReceiptEditor() {
       .then((response) => response.text())
       .then((data) => {
         console.log(data);
-        window.history.replaceState(null, "", "/");
+
+        setDeleteIsDisabled(false);
+        navigate("/editor");
+        window.location.reload();
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+        setDeleteIsDisabled(false);
+      });
   }
   // {
   //   id: 'ce2b5448139d4929b81e8a53d7469e16',
@@ -109,7 +141,10 @@ export default function ReceiptEditor() {
       setUserCanEdit(false);
     }
 
-    if (!window.location.pathname.substring(1)) return;
+    const receiptString = window.location.pathname
+      .replace("/editor", "")
+      .substring(1);
+    if (!receiptString) return;
 
     let receiptData: {
       isSameUser: boolean;
@@ -128,7 +163,7 @@ export default function ReceiptEditor() {
       },
       body: JSON.stringify({
         token: token,
-        receiptID: window.location.pathname.substring(1),
+        receiptID: receiptString,
       }),
     })
       .then((response) => response.json())
@@ -167,7 +202,7 @@ export default function ReceiptEditor() {
   }, [items, lastItems]);
 
   return (
-    <div id="page">
+    <div>
       {!receiptShown && (
         <Button
           onClick={() => {
@@ -205,22 +240,24 @@ export default function ReceiptEditor() {
                 </Button>
                 {isEditMode && (
                   <>
-                    <Button
+                    <OneClickButton
                       onClick={sendReceiptRequest}
                       variant="contained"
                       color="warning"
                       startIcon={<SaveIcon />}
+                      buttonIsDisabled={saveIsDisabled}
                     >
-                      save
-                    </Button>
-                    <Button
+                      Save
+                    </OneClickButton>
+                    <OneClickButton
                       onClick={sendDeleteRequest}
                       variant="contained"
                       color="error"
                       startIcon={<DeleteIcon />}
+                      buttonIsDisabled={deleteIsDisabled}
                     >
                       Delete
-                    </Button>
+                    </OneClickButton>
                   </>
                 )}
               </div>
@@ -251,7 +288,6 @@ export default function ReceiptEditor() {
         </div>
       )}
     </div>
-    
   );
 }
 /*
