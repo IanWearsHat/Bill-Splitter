@@ -1,7 +1,10 @@
+import { Button } from "@mui/material";
 import CredentialsForm from "../../components/CredentialsForm/CredentialsForm";
 import "./Landing.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
+  const navigate = useNavigate();
   return (
     <>
       <div className="hero">
@@ -10,12 +13,16 @@ export default function Landing() {
           <p>
             Everyone knows what they owe with a simple link. Get started now.
           </p>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => navigate("/editor/99d2009e38b24d82a23b102cdb9da160")}
+          >
+            See a sample receipt
+          </Button>
         </div>
 
-        {/* <div className="formContainer"> */}
         <CredentialsForm isLoginForm={false} />
-
-        {/* </div> */}
       </div>
     </>
   );
