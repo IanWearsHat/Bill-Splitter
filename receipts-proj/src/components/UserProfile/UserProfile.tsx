@@ -7,11 +7,16 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import { useRef } from "react";
+
+const bucketURL = "https://receipts-profile-images.s3.us-east-2.amazonaws.com/";
+const getSignedURL = "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/generateURL";
+// const getSignedURL = "http://localhost:3000/generateURL";
 
 export default function UserProfile() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -22,6 +27,52 @@ export default function UserProfile() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const inputFile = useRef<HTMLInputElement | null>(null);
+
+  async function putPicture(event: React.ChangeEvent<HTMLInputElement>) {
+    try {
+      const files = event.target.files;
+
+      let file;
+      if (files && files.length > 0) {
+        file = files[0];
+      } else {
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      let resolvedURL = null;
+      await fetch(getSignedURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: token }),
+      })
+        .then((data) => data.text())
+        .then((url) => (resolvedURL = url));
+
+      if (!resolvedURL) return;
+      console.log(resolvedURL);
+
+      const response = await fetch(resolvedURL, {
+        method: "PUT",
+        body: file,
+      });
+
+      if (response.ok) {
+        console.log("File uploaded successfully!");
+      } else {
+        console.error("Error uploading file:", response.statusText);
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  }
+
   return (
     <React.Fragment>
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
@@ -41,7 +92,13 @@ export default function UserProfile() {
           </IconButton>
         </Tooltip>
       </Box>
-
+      <input
+        type="file"
+        id="file"
+        ref={inputFile}
+        style={{ display: "none" }}
+        onChange={putPicture}
+      />
       <Menu
         anchorEl={anchorEl}
         id="account-menu"
@@ -77,13 +134,18 @@ export default function UserProfile() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            if (!inputFile.current) return;
+            inputFile.current.click();
+          }}
+        >
           <ListItemIcon>
             <EditIcon fontSize="small" />
           </ListItemIcon>
           Change profile picture
         </MenuItem>
-        
+
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Logout fontSize="small" />

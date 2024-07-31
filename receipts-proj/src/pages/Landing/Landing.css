@@ -9,6 +9,15 @@
     gap: 3em;
 }
 
+.infoColumn > h1 {
+    margin-bottom: 0;
+}
+
+.infoColumn > p {
+    margin-top: 0;
+    margin-bottom: 2em;
+}
+
 #divider {
     width: 100%;
     margin-top: 16px;

@@ -15,7 +15,7 @@ function App() {
   return (
     <AuthContext.Provider value={{ loggedIn, setLoggedIn }}>
       <Router>
-        {/* <UserProfile /> */}
+        <UserProfile />
         {/* <Link to="/">Home</Link>
         <hr />
         <Link to="/editor">Editor</Link> */}
