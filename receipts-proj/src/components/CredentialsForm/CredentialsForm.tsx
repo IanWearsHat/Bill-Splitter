@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import "./CredentialsForm.css";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../AuthContext";
-import { Button, CircularProgress, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import OneClickButton from "../lib/OneClickButton";
 
@@ -12,6 +12,7 @@ const loginURL =
   "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/login";
 // const createAccountURL = "http://localhost:3000/createNewAccount";
 // const loginURL = "http://localhost:3000/login";
+
 
 const saltRounds = 10;
 
