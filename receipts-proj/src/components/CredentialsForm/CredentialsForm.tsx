@@ -22,7 +22,7 @@ interface CredentialsFormProps {
 export default function CredentialsForm({ isLoginForm }: CredentialsFormProps) {
   const navigate = useNavigate();
 
-  const { setLoggedIn } = useContext(AuthContext);
+  const { setLoginUser } = useContext(AuthContext);
 
   const [user, setUser] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -41,7 +41,7 @@ export default function CredentialsForm({ isLoginForm }: CredentialsFormProps) {
       .then((data) => {
         console.log(data);
         localStorage.setItem("token", data.token);
-        setLoggedIn(true);
+        setLoginUser(user);
         setButtonIsDisabled(false);
         navigate("/editor");
       })

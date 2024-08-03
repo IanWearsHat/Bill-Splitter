@@ -12,14 +12,22 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
-import { useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { AuthContext } from "../../AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const bucketURL = "https://receipts-profile-images.s3.us-east-2.amazonaws.com/";
-const getSignedURL = "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/generateURL";
+const getSignedURL =
+  "https://5xx9atbspi.execute-api.us-east-2.amazonaws.com/default/generateURL";
 // const getSignedURL = "http://localhost:3000/generateURL";
 
 export default function UserProfile() {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { user, setLoginUser } = useContext(AuthContext);
+
+  const [imageKey, setImageKey] = useState(0);
+
+  const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -33,16 +41,18 @@ export default function UserProfile() {
   async function putPicture(event: React.ChangeEvent<HTMLInputElement>) {
     try {
       const files = event.target.files;
-
+      console.log("before file");
       let file;
       if (files && files.length > 0) {
         file = files[0];
       } else {
         return;
       }
+      console.log("file");
 
       const token = localStorage.getItem("token");
       if (!token) return;
+      console.log("token");
 
       let resolvedURL = null;
       await fetch(getSignedURL, {
@@ -52,8 +62,11 @@ export default function UserProfile() {
         },
         body: JSON.stringify({ token: token }),
       })
-        .then((data) => data.text())
-        .then((url) => (resolvedURL = url));
+        .then((data) => data.json())
+        .then((obj) => {
+          resolvedURL = obj.resolvedURL;
+          setLoginUser(obj.user);
+        });
 
       if (!resolvedURL) return;
       console.log(resolvedURL);
@@ -65,12 +78,19 @@ export default function UserProfile() {
 
       if (response.ok) {
         console.log("File uploaded successfully!");
+        setImageKey(Date.now());
       } else {
         console.error("Error uploading file:", response.statusText);
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
+  }
+
+  function logOut() {
+    localStorage.setItem("token", "");
+    setLoginUser("")
+    navigate("/");
   }
 
   return (
@@ -86,8 +106,12 @@ export default function UserProfile() {
             aria-expanded={open ? "true" : undefined}
           >
             <Avatar
+              key={imageKey}
               sx={{ width: 32, height: 32, border: 2 }}
-              src="https://receipts-profile-images.s3.us-east-2.amazonaws.com/Screenshot_1.png"
+              src={
+                user &&
+                `https://receipts-profile-images.s3.us-east-2.amazonaws.com/${user}.png?t=${imageKey}`
+              }
             ></Avatar>
           </IconButton>
         </Tooltip>
@@ -146,7 +170,7 @@ export default function UserProfile() {
           Change profile picture
         </MenuItem>
 
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={logOut}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

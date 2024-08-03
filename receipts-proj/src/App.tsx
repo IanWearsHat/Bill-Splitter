@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 
 import { AuthContext } from "./AuthContext";
@@ -9,16 +9,23 @@ import UserProfile from "./components/UserProfile/UserProfile";
 import EditingPage from "./pages/EditingPage/EditingPage";
 import CredentialsForm from "./components/CredentialsForm/CredentialsForm";
 import Login from "./pages/Login/Login";
+import getUserIdentity from "./utils/getUserIdentity";
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setLoginUser] = useState("");
+
+  useEffect(() => {
+    async function loadUser() {
+      const res = await getUserIdentity();
+      if (res) setLoginUser(res);
+    }
+    loadUser();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ loggedIn, setLoggedIn }}>
+    <AuthContext.Provider value={{ user, setLoginUser }}>
       <Router>
         <UserProfile />
-        {/* <Link to="/">Home</Link>
-        <hr />
-        <Link to="/editor">Editor</Link> */}
 
         <Routes>
           <Route path="/" element={<Landing />} />

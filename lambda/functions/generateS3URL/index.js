@@ -49,6 +49,6 @@ exports.handler = async (event, context) => {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
     },
-    body: resolvedURL,
+    body: JSON.stringify({ resolvedURL: resolvedURL, user: user }),
   };
 };
