@@ -1,5 +1,12 @@
 #nameColumn {
-    /* padding: 10em; */
+    padding-right: 2em;
+}
+
+@media screen and (max-width: 768px) {
+    #nameColumn {
+        width: 100%;
+        padding-bottom: 5em;
+    }
 }
 
 .modifiedButton {

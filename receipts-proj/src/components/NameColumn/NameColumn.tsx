@@ -51,6 +51,7 @@ export default function NameColumn() {
   return (
     <div id="nameColumn">
       <ToggleButtonGroup
+        sx={{ width: "100%" }}
         orientation="vertical"
         size="large"
         exclusive
@@ -58,8 +59,9 @@ export default function NameColumn() {
         onChange={handleChange}
       >
         {names.map((name) => (
-          <div key={name[0]}>
+          <div key={name[0]} style={{ width: "100%" }}>
             <ToggleButton
+              sx={{ width: "100%" }}
               className="modifiedButton"
               onClick={() => {
                 if (selectedName === name[0]) {

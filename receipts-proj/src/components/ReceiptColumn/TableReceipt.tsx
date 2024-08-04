@@ -59,7 +59,7 @@ export default function TableReceipt({
   return (
     <div className="itemsList">
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 850 }} aria-label="simple table">
+        <Table aria-label="simple table">
           <TableBody>
             {isTotalCalculation && (
               <TableRow>

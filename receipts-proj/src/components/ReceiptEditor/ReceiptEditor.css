@@ -10,6 +10,8 @@
     display: inline-flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
+    /* width: 80%; */
 }
 
 #receiptName {
@@ -21,14 +23,27 @@
     display: flex;
 }
 
+@media screen and (max-width: 768px) {
+    #editor {
+        flex-direction: column;
+    }
+}
+
 #header {
-    width: 100%;
     display: grid;
     grid-template-columns: 2fr 1fr;
+
+    width: 100%;
+    max-width: 80vw;
+    margin-bottom: 2em;
 }
 
 #buttonSuite {
     display: flex;
-    height: fit-content;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
     gap: 1em;
+    padding-left: 1em;
 }

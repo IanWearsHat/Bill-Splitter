@@ -202,7 +202,7 @@ export default function ReceiptEditor() {
   }, [items, lastItems]);
 
   return (
-    <div>
+    <>
       {!receiptShown && (
         <Button
           onClick={() => {
@@ -219,6 +219,7 @@ export default function ReceiptEditor() {
           <div id="header">
             {userCanEdit && isEditMode ? (
               <Input
+                sx={{ maxWidth: 500 }}
                 placeholder="Enter Receipt Name"
                 value={receiptName}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -287,7 +288,8 @@ export default function ReceiptEditor() {
           </ErrorContext.Provider>
         </div>
       )}
-    </div>
+      {/* </div> */}
+    </>
   );
 }
 /*

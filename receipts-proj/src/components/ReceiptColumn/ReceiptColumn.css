@@ -4,19 +4,17 @@
     align-items: end;
 
     padding: 0 2em;
-    width: auto;
 }
 
-.itemCard {
-    display: flex;
-    width: 100%;
-}
-
-.itemName {
-    margin-right: auto;
-}
 
 #tables {
     display: flex;
     flex-direction: column;
+    width: 50vw;
+}
+
+@media screen and (max-width: 768px) {
+    #tables {
+        width: 80vw;
+    }
 }
